@@ -1,46 +1,43 @@
 package bufsize
 
 import (
-	"os"
-	"strings"
-
 	"github.com/coredns/coredns/core/dnsserver"
 	"github.com/coredns/coredns/plugin"
 
 	"github.com/caddyserver/caddy"
 )
 
-func init() { plugin.Register("nsid", setup) }
+func init() { plugin.Register("bufsize", setup) }
 
 func setup(c *caddy.Controller) error {
-	nsid, err := nsidParse(c)
+	bufsize, err := bufsizeParse(c)
 	if err != nil {
-		return plugin.Error("nsid", err)
+		return plugin.Error("bufsize", err)
 	}
 
 	dnsserver.GetConfig(c).AddPlugin(func(next plugin.Handler) plugin.Handler {
-		return Nsid{Next: next, Data: nsid}
+		return Bufsize{Next: next, Size: bufsize}
 	})
 
 	return nil
 }
 
-func nsidParse(c *caddy.Controller) (string, error) {
+func bufsizeParse(c *caddy.Controller) (int, error) {
 	// Use hostname as the default
-	nsid, err := os.Hostname()
-	if err != nil {
-		nsid = "localhost"
-	}
-	i := 0
-	for c.Next() {
-		if i > 0 {
-			return nsid, plugin.ErrOnce
+	bufsize := 512
+	args := c.RemainingArgs()
+	bufsize = args
+
+	/*
+		for c.Next() {
+			if i > 0 {
+				return bufsize, plugin.ErrOnce
+			}
+			i++
+			args := c.RemainingArgs()
+			bufsize = args
 		}
-		i++
-		args := c.RemainingArgs()
-		if len(args) > 0 {
-			nsid = strings.Join(args, " ")
-		}
-	}
-	return nsid, nil
+	*/
+
+	return bufsize, nil
 }
