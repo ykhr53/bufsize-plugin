@@ -23,7 +23,7 @@ func setup(c *caddy.Controller) error {
 }
 
 func bufsizeParse(c *caddy.Controller) (int, error) {
-	// Use hostname as the default
+	// Use 512 byte as the default
 	bufsize := 512
 	args := c.RemainingArgs()
 	bufsize = args
