@@ -8,6 +8,7 @@ import (
 	"github.com/miekg/dns"
 )
 
+// Bufsize plugin
 type Bufsize struct {
 	Next plugin.Handler
 	Size int
@@ -15,15 +16,11 @@ type Bufsize struct {
 
 // ServeDNS implements the plugin.Handler interface.
 func (buf Bufsize) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (int, error) {
-	//state := request.Request{W: w, Req: r}
+	if option := r.IsEdns0(); option != nil {
+		option.SetUDPSize(uint16(buf.Size))
+	}
 
-	a := new(dns.Msg)
-	a.SetReply(r)
-	a.Authoritative = true
-
-	w.WriteMsg(a)
-
-	return 0, nil
+	return plugin.NextOrFailure(buf.Name(), buf.Next, ctx, w, r)
 }
 
 // Name implements the Handler interface.
