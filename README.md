@@ -1,3 +1,7 @@
+# THIS PLUGIN HAS BEEN MERGED
+This plugin has been merged [coredns/coredns](https://github.com/coredns/coredns) repo, this ykhr53/bufsize-plugin repo's codes are old.  
+Please refer to [coredns/coredns](https://github.com/coredns/coredns).
+
 # bufsize
 ## Name
 *bufsize* - modifies EDNS0 buffer size for protecting answers from vulnerability of IP flagmentation.
